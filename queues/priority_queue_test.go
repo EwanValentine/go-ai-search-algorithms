@@ -1,19 +1,20 @@
-package greedy_first
+package queues
 
 import (
 	"github.com/matryer/is"
+	"search-alogs/node"
 	"testing"
 )
 
 func TestAddToQueue(t *testing.T) {
 	is := is.New(t)
-	q := NewQueue[string](nil)
-	_ = q.Add(&Node[string]{
+	q := NewPriorityQueue[string]()
+	_ = q.Add(&node.NodeWithCost[string]{
 		Name: "a",
 		Cost: 1,
 	})
 
-	_ = q.Add(&Node[string]{
+	_ = q.Add(&node.NodeWithCost[string]{
 		Name: "b",
 		Cost: 2,
 	})
