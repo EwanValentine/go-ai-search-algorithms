@@ -1,0 +1,38 @@
+<head>
+    <style> body { margin: 0; } </style>
+
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <!--<script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+<div id="3d-graph"></div>
+
+<script>
+
+    (async () => {
+        const response = await fetch('/data'+window.location.pathname);
+        const data = await response.json();
+
+        console.log(data);
+
+        // Random tree
+        const N = 40;
+        const gData = {
+            nodes: data.nodes.map(i => ({ id: i })),
+            links: Object.entries(data.neighbours).map((k, v) => ({
+                source: k,
+                target: v,
+            }))
+        };
+
+        const Graph = ForceGraph3D()
+        (document.getElementById('3d-graph'))
+            .graphData(gData)
+            .linkDirectionalArrowLength(3.5)
+            .linkDirectionalArrowRelPos(1)
+            .linkCurvature(0.25);
+    })()
+
+</script>
+</body>

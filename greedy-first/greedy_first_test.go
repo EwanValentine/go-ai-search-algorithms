@@ -2,6 +2,7 @@ package greedy_first
 
 import (
 	"github.com/matryer/is"
+	"log"
 	"search-alogs/graph"
 	"search-alogs/node"
 	"testing"
@@ -32,4 +33,13 @@ func TestGreedyFirstSearch(t *testing.T) {
 	path := searcher.Do(a5, h0)
 
 	is.Equal(path, []string{"a", "b", "d", "e", "g", "h"})
+	is.Equal(searcher.ListSteps(), [][]string{
+		{"b", "c"},
+		{"a", "d"},
+		{"b", "e"},
+		{"d", "f", "g"},
+		{"e", "f", "h"},
+	})
+	log.Println(searcher.ListSteps())
+	log.Println(path)
 }

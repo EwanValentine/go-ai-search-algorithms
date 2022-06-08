@@ -2,7 +2,7 @@ package greedy_first
 
 import (
 	"fmt"
-	"log"
+
 	"search-alogs/constraints"
 	"search-alogs/graph"
 	"search-alogs/node"
@@ -58,8 +58,6 @@ func (g *GreedySearch[T]) Do(source, target *node.NodeWithCost[T]) []T {
 	// the distance between two nodes. The shortest node is selected
 	g.Queue = queues.NewPriorityQueue(g.Neighbours[*source])
 
-	// log.Println("queue:", g.queue)
-
 	// We add the source node as the first node in the queue
 	g.Queue.Add(source)
 
@@ -72,9 +70,6 @@ func (g *GreedySearch[T]) Do(source, target *node.NodeWithCost[T]) []T {
 		if len(g.Queue.Nodes) > 0 {
 			popped := g.Queue.Pop()
 
-			frontier := g.Queue.List()
-			log.Println("frontier:", frontier)
-
 			path = append(path, popped.Name)
 
 			// If we reach the target, then WE ARE DONE 🎉
@@ -82,18 +77,25 @@ func (g *GreedySearch[T]) Do(source, target *node.NodeWithCost[T]) []T {
 				return path
 			}
 
+			frontier := g.Neighbours[*popped]
+
+			var frontiers []T
+
 			// We expand the neighbours of the next selected node
 			// from the queue. We check that that node hasn't already
 			// been visited. We then add it to the visited nodes,
 			// and add the neighbours of that node to the queue.
 			// This is similar to breadth first search, except that
 			// the 'cost' value is considered as part of the queue.
-			for _, v := range g.Neighbours[*popped] {
+			for _, v := range frontier {
+				frontiers = append(frontiers, v.Name)
 				if g.Visited.Values[v.Name] == false {
 					g.Visited.Values[v.Name] = true
 					g.Queue.Add(v)
 				}
 			}
+
+			g.Steps = append(g.Steps, frontiers)
 		}
 	}
 }

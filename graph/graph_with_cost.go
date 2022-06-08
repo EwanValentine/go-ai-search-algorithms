@@ -15,6 +15,7 @@ func NewWithCost[T constraints.Key]() *WithCost[T] {
 		Neighbours: make(map[node.NodeWithCost[T]][]*node.NodeWithCost[T]),
 		Visited:    Set[T]{},
 		Queue:      &queues.PriorityQueue[T]{},
+		Steps:      make([][]T, 0),
 		lock:       sync.RWMutex{},
 	}
 }
@@ -25,6 +26,9 @@ type Set[T constraints.Key] struct {
 	Values map[T]bool
 }
 
+// Neighbours is a map of associated nodes
+type Neighbours[T constraints.Key] map[node.NodeWithCost[T]][]*node.NodeWithCost[T]
+
 // WithCost is a generic graph data structure, which takes a list of nodes
 // and a list of each nodes neighbours. It's possible to use this graph
 // data structure across multiple search algorithms
@@ -34,6 +38,7 @@ type WithCost[T constraints.Key] struct {
 	Visited    Set[T]
 	Queue      *queues.PriorityQueue[T]
 	lock       sync.RWMutex
+	Steps      [][]T
 }
 
 // AddNode adds a new node to the graph
@@ -57,4 +62,25 @@ func (g *WithCost[T]) AddNeighbour(a, b *node.NodeWithCost[T]) *WithCost[T] {
 	g.Neighbours[*b] = append(g.Neighbours[*b], a)
 
 	return g
+}
+
+// GetNeighbours -
+func (g *WithCost[T]) GetNeighbours() map[T][]T {
+	neighbours := make(map[T][]T)
+
+	for k, v := range g.Neighbours {
+		var nNeighbours []T
+		for _, n := range v {
+			nNeighbours = append(nNeighbours, n.Name)
+		}
+
+		neighbours[k.Name] = nNeighbours
+	}
+
+	return neighbours
+}
+
+// ListSteps lists the steps taken, or the list of frontiers
+func (g *WithCost[T]) ListSteps() [][]T {
+	return g.Steps
 }
